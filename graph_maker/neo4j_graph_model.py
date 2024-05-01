@@ -43,7 +43,7 @@ def neo4jDb():
         db.close_connection()
 
 
-class Neo4jGraph:
+class Neo4jGraphModel:
     _edges: List[Edge]
     _create_indices: bool = False
 
