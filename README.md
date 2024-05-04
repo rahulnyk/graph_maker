@@ -101,7 +101,10 @@ llm = GroqClient(model=model, temperature=0.1, top_p=0.5)
 graph_maker = GraphMaker(ontology=ontology, llm_client=llm, verbose=False)
 
 ## create a graph out of a list of Documents.
-graph = graph_maker.from_documents(docs)
+graph = graph_maker.from_documents(
+    list(docs),
+    delay_s_between=10 ## delay_s_between because otherwise groq api maxes out pretty fast.
+    )
 ## result -> a list of Edges.
 print("Total number of Edges", len(graph))
 ## 1503
@@ -119,6 +122,7 @@ class Edge(BaseModel):
     node_2: Node
     relationship: str
     metadata: dict = {}
+    order: Union[int, None] = None
 ```
 
 The Graph Makers runs each document through the model and parses the response into graph edges.
