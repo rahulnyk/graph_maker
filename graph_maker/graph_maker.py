@@ -4,14 +4,15 @@ from pydantic import ValidationError
 import json
 import re
 from .logger import GraphLogger
-from typing import List
+from typing import List, Union
+import time
 
 green_logger = GraphLogger(name="GRAPH MAKER LOG", color="green_bright").getLogger()
 json_parse_logger = GraphLogger(name="GRAPH MAKER ERROR", color="magenta").getLogger()
 verbose_logger = GraphLogger(name="GRAPH MAKER VERBOSE", color="blue").getLogger()
 
 default_ontology = Ontology(
-    label=[
+    labels=[
         {"Person": "Person name without any adjectives"},
         "Place",
         "Object",
@@ -56,7 +57,7 @@ class GraphMaker:
             "Consider the following ontology. \n"
             f"{self._ontology} \n"
             "The user will provide you with an input text delimited by ```. "
-            "Extract all the entities and relationships from the user-provided text as per the given ontology. "
+            "Extract all the entities and relationships from the user-provided text as per the given ontology. Do not use any previous knowledge about the context."
             "Remember there can be multiple direct (explicit) or implied relationships between the same pair of nodes. "
             "Be consistent with the given ontology. Use ONLY the labels and relationships mentioned in the ontology. "
             "Format your output as a json with the following schema. \n"
@@ -133,17 +134,28 @@ class GraphMaker:
         edges = list(filter(None, edges))
         return edges
 
-    def from_document(self, doc: Document) -> List[Edge]:
+    def from_document(
+        self, doc: Document, order: Union[int, None] = None
+    ) -> List[Edge]:
         verbose_logger.info(f"Using Ontology:\n{self._ontology}")
         graph = self.from_text(doc.text)
         for edge in graph:
             edge.metadata = doc.metadata
+            edge.order = order
         return graph
 
-    def from_documents(self, docs: List[Document]) -> List[Edge]:
+    def from_documents(
+        self,
+        docs: List[Document],
+        order_attribute: Union[int, None] = None,
+        delay_s_between=0,
+    ) -> List[Edge]:
         graph: List[Edge] = []
         for index, doc in enumerate(docs):
+            ## order defines the chronology or the order in which the documents should in interpretted.
+            order = getattr(doc, order_attribute) if order_attribute else index
             green_logger.info(f"Document: {index+1}")
-            subgraph = self.from_document(doc)
+            subgraph = self.from_document(doc, order)
             graph = [*graph, *subgraph]
+            time.sleep(delay_s_between)
         return graph

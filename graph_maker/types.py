@@ -15,7 +15,7 @@ class LLMClient(ABC):
 
 
 class Ontology(BaseModel):
-    label: List[Union[str, Dict]]
+    labels: List[Union[str, Dict]]
     relationships: List[str]
 
     def dump(self):
@@ -35,6 +35,7 @@ class Edge(BaseModel):
     node_2: Node
     relationship: str
     metadata: dict = {}
+    order: Union[int, None] = None
 
 
 class Document(BaseModel):

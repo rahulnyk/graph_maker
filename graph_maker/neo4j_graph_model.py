@@ -8,6 +8,7 @@ from neomodel import (
     RelationshipTo,
     StructuredRel,
     JSONProperty,
+    IntegerProperty,
 )
 from typing import List
 from .types import Edge, Node
@@ -20,6 +21,7 @@ config = dotenv_values(".env")
 class Relationship(StructuredRel):
     description = StringProperty()
     metadata = JSONProperty()
+    order = IntegerProperty()
 
 
 class Entity(StructuredNode):
@@ -66,7 +68,10 @@ class Neo4jGraphModel:
                     )
                     entity_1.relationship.connect(
                         entity_2,
-                        {"description": edge.relationship, "metadata": edge.metadata},
+                        {
+                            "description": edge.relationship,
+                            **edge.model_dump(exclude=["description"]),
+                        },
                     )
                     count += 1
         return count
