@@ -6,3 +6,4 @@ old_notebooks
 experiments*
 .venv
 assets/evolution_gif
+assets/*.psd
