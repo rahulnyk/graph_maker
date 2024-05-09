@@ -1,5 +1,6 @@
 from .types import Ontology, LLMClient, Edge, Document
 from .llm_clients.groq_client import GroqClient
+from .llm_clients.openai_client import OpenAIClient
 from pydantic import ValidationError
 import json
 import re
@@ -47,6 +48,9 @@ class GraphMaker:
             verbose_logger.setLevel("INFO")
         else:
             verbose_logger.setLevel("DEBUG")
+
+    def set_openai_llm_client(self, model: str = "gpt-4-turbo", temperature=0.1, top_p=1, max_tokens=2048):
+        self._llm_client = OpenAIClient(model, temperature, top_p, max_tokens)
 
     def user_message(self, text: str) -> str:
         return f"input text: ```\n{text}\n```"
