@@ -93,7 +93,7 @@ class GraphMaker:
     def manually_parse_json(self, text: str):
         green_logger.info(f"Trying Manual Parsing: \n{text}")
         pattern = r"\}\s*,\s*\{"
-        stripped_text = text.strip("\n[{]} ")
+        stripped_text = text.strip("\n[{]}` ")
         # Split the json string into string of objects
         splits = re.split(pattern, stripped_text, flags=re.MULTILINE | re.DOTALL)
         # reconstruct object strings
@@ -157,5 +157,9 @@ class GraphMaker:
             green_logger.info(f"Document: {index+1}")
             subgraph = self.from_document(doc, order)
             graph = [*graph, *subgraph]
-            time.sleep(delay_s_between)
+            if delay_s_between > 0:
+                green_logger.info(
+                    f"Waiting for {delay_s_between}s before the next request ... "
+                )
+                time.sleep(delay_s_between)
         return graph
