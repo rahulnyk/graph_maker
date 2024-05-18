@@ -7,3 +7,4 @@ experiments*
 .venv
 assets/evolution_gif
 assets/*.psd
+data
