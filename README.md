@@ -29,7 +29,7 @@ To set up this project, [you will need Poetry](https://python-poetry.org/docs/co
 
 ```zsh
 # Create a local environment
-$ poetry config virtualenvs.create false --local
+$ poetry config --local virtualenvs.in-project true
 # Install dependencies.
 $ poetry install
 ```
